@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đại Thịnh Phát - Danh Mục Sản Phẩm</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #0a0a1a;
+      color: #fff;
+      min-height: 100vh;
+    }
+    .header {
+      background: linear-gradient(135deg, #0d1b3e 0%, #1a237e 40%, #0d47a1 70%, #1565c0 100%);
+      border-bottom: 3px solid #00bcd4;
+    }
+    .header-inner {
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      padding: 20px 40px;
+    }
+    .logo {
+      width: 90px; height: 90px;
+      background: linear-gradient(135deg, #00bcd4, #1565c0);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; font-weight: 900; color: white;
+      box-shadow: 0 0 20px rgba(0,188,212,0.6);
+      border: 2px solid rgba(0,188,212,0.5);
+      flex-shrink: 0;
+    }
+    .company-name {
+      font-size: clamp(26px, 5vw, 52px);
+      font-weight: 900;
+      background: linear-gradient(90deg, #fff, #00e5ff, #fff);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 2px;
+    }
+    .company-sub {
+      font-size: 13px;
+      color: #80deea;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+    .main {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 30px 20px;
+    }
+    .section-title {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .section-title h2 {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      color: #e0f7fa;
+      border: 1px solid #37474f;
+      display: inline-block;
+      padding: 10px 40px;
+    }
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 20px;
+    }
+    .product-card {
+      background: #111827;
+      border: 1px solid #1e3a5f;
+      border-radius: 8px;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+    }
+    .product-card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 32px rgba(0,188,212,0.25);
+      border-color: #00bcd4;
+    }
+    .card-img {
+      width: 100%; height: 200px;
+      object-fit: cover; display: block;
+      background: #1a2744;
+    }
+    .card-img-placeholder {
+      width: 100%; height: 200px;
+      background: linear-gradient(135deg, #1a237e, #0d47a1);
+      display: flex; align-items: center;
+      justify-content: center; font-size: 48px;
+    }
+    .card-body { padding: 16px; border-top: 1px solid #1e3a5f; }
+    .card-title { font-size: 15px; font-weight: 700; color: #e0f7fa; margin-bottom: 6px; }
+    .card-desc  { font-size: 12px; color: #78909c; margin-bottom: 12px; line-height: 1.5; }
+    .card-price { font-size: 16px; font-weight: 800; color: #00e5ff; }
+    .loading {
+      text-align: center; padding: 60px 20px;
+      color: #546e7a; grid-column: 1/-1;
+    }
+    .spinner {
+      width: 40px; height: 40px;
+      border: 3px solid #1e3a5f;
+      border-top-color: #00bcd4;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .footer {
+      background: linear-gradient(90deg, #0288d1, #01579b);
+      padding: 16px 40px;
+      margin-top: 40px;
+    }
+    .footer p { font-size: 13px; color: #e1f5fe; line-height: 1.8; }
+    .modal-overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 1000; align-items: center; justify-content: center;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: #111827;
+      border: 1px solid #00bcd4;
+      border-radius: 12px;
+      max-width: 500px; width: 90%;
+      overflow: hidden;
+      animation: popIn 0.3s ease;
+    }
+    @keyframes popIn {
+      from { transform: scale(0.85); opacity: 0; }
+      to   { transform: scale(1);    opacity: 1; }
+    }
+    .modal img { width: 100%; height: 260px; object-fit: cover; }
+    .modal-body { padding: 20px; }
+    .modal-title { font-size: 20px; font-weight: 800; color: #e0f7fa; margin-bottom: 8px; }
+    .modal-desc  { font-size: 14px; color: #90a4ae; margin-bottom: 16px; line-height: 1.6; }
+    .modal-price { font-size: 22px; font-weight: 900; color: #00e5ff; margin-bottom: 20px; }
+    .btn-close {
+      width: 100%; padding: 12px;
+      background: linear-gradient(90deg, #0288d1, #00bcd4);
+      color: white; border: none; border-radius: 6px;
+      font-size: 14px; font-weight: 700; cursor: pointer;
+    }
+    .btn-zalo {
+      display: block; width: 100%; padding: 12px;
+      background: linear-gradient(90deg, #0068ff, #0047b3);
+      color: white; border: none; border-radius: 6px;
+      font-size: 14px; font-weight: 700; cursor: pointer;
+      text-align: center; text-decoration: none;
+      margin-bottom: 10px;
+    }
+    @media (max-width: 600px) {
+      .header-inner { padding: 16px 20px; gap: 14px; }
+      .footer { padding: 16px 20px; }
+      .main { padding: 20px 12px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="logo">ĐTP</div>
+    <div>
+      <div class="company-name">ĐẠI THỊNH PHÁT</div>
+      <div class="company-sub">Vật Tư Công Nghiệp</div>
+    </div>
+  </div>
+</div>
+
+<div class="main">
+  <div class="section-title">
+    <h2>DANH MỤC SẢN PHẨM</h2>
+  </div>
+  <div id="productGrid" class="product-grid">
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Đang tải sản phẩm...</p>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <p><strong>Nhà máy:</strong> 1/411B, Thuận Giao 19, khu phố Hoà Lân 2, phường Thuận Giao, TP. Hồ Chí Minh</p>
+  <p><strong>Điện thoại:</strong> 0981692179</p>
+</div>
+
+<div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+  <div class="modal">
+    <img id="modalImg" src="" alt="" style="display:none">
+    <div class="modal-body">
+      <div class="modal-title" id="modalTitle"></div>
+      <div class="modal-desc"  id="modalDesc"></div>
+      <div class="modal-price" id="modalPrice"></div>
+      <a class="btn-zalo" href="https://zalo.me/0981692179" target="_blank">
+        💬 Liên hệ Zalo ngay
+      </a>
+      <button class="btn-close" onclick="closeModalDirect()">✕ Đóng</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ⚠️ THAY LINK NÀY BẰNG LINK APPS SCRIPT CỦA BẠN
+  const API_URL = 'https://script.google.com/macros/s/AKfycbwUoiIyvTfY7TMw5SvpYMU694gVom4A2jCR40CUOZf1T314aVhAggA5KVJ2xoSSgL9J/exec?api=true';
+
+  function formatGia(gia) {
+    return new Intl.NumberFormat('vi-VN').format(gia) + ' VNĐ';
+  }
+
+  function renderProducts(products) {
+    const grid = document.getElementById('productGrid');
+    if (!products || products.length === 0) {
+      grid.innerHTML = '<div class="loading"><p>Chưa có sản phẩm nào.</p></div>';
+      return;
+    }
+    window._products = products;
+    grid.innerHTML = products.map((p, i) => `
+      <div class="product-card" onclick="openModal(${i})">
+        ${p.hinhAnh
+          ? `<img class="card-img" src="${p.hinhAnh}" alt="${p.ten}" onerror="this.style.display='none'">`
+          : `<div class="card-img-placeholder">📦</div>`
+        }
+        <div class="card-body">
+          <div class="card-title">${p.ten}</div>
+          <div class="card-desc">${p.moTa || ''}</div>
+          <div class="card-price">${formatGia(p.gia)}</div>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function openModal(i) {
+    const p = window._products[i];
+    const img = document.getElementById('modalImg');
+    img.src = p.hinhAnh || '';
+    img.style.display = p.hinhAnh ? 'block' : 'none';
+    document.getElementById('modalTitle').textContent = p.ten;
+    document.getElementById('modalDesc').textContent  = p.moTa || '';
+    document.getElementById('modalPrice').textContent = formatGia(p.gia);
+    document.getElementById('modalOverlay').classList.add('active');
+  }
+
+  function closeModal(e) {
+    if (e.target === document.getElementById('modalOverlay')) closeModalDirect();
+  }
+
+  function closeModalDirect() {
+    document.getElementById('modalOverlay').classList.remove('active');
+  }
+
+  fetch(API_URL)
+    .then(res => res.json())
+    .then(renderProducts)
+    .catch(() => {
+      document.getElementById('productGrid').innerHTML =
+        '<div class="loading"><p>❌ Lỗi tải dữ liệu! Vui lòng thử lại.</p></div>';
+    });
+</script>
+
+</body>
+</html>
